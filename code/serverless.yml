@@ -4,7 +4,8 @@ frameworkVersion: '3'
 provider:
   name: aws
   runtime: python3.12
-  stage: ${opt:stage, 'dev'}
+  # env:STAGE を優先（serverless-offline で --stage が opt に渡らない場合の回避）
+  stage: ${env:STAGE, opt:stage, 'dev'}
 
 custom:
   defaultStage:
@@ -25,8 +26,8 @@ functions:
       - httpApi: '*'
         path: /{proxy+}
     environment:
-      otherfile
-      APP_STAGE: ${self:provider.stage, 'dev'}
+      # compose の environment を優先（serverless の変数解決前に渡る）
+      APP_STAGE: ${env:APP_STAGE, env:STAGE, self:provider.stage, '${self:custom.defaultStage}'}
 plugins:
   - serverless-offline
   - serverless-python-requirements

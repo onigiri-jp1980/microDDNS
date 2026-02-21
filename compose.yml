@@ -11,7 +11,9 @@ services:
     ports:
       - 3000:3000
     environment:
+      - APP_STAGE=local
+      - STAGE=local
       - NODE_ENV=development
     volumes:
       - ./code:/app
-    command: sls offline start --host 0.0.0.0 --httpPort 3000 --stage development
+    command: sls offline start --host 0.0.0.0 --httpPort 3000 --stage local
