@@ -19,7 +19,7 @@ down:
 	$(set_env_vars) docker compose down --remove-orphans --rmi all
 .PHONY: down
 restart:
-	$(set_env_vars) docker compose restart
+	$(set_env_vars) docker compose down && $(set_env_vars) docker compose up -d
 .PHONY: restart
 
 build:
