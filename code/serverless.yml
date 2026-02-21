@@ -22,12 +22,15 @@ package:
 functions:
   microDDNS:
     handler: app.handler
+    timeout: 10
     events:
-      - httpApi: '*'
-        path: /{proxy+}
+      - httpApi:
+          path: /{proxy+}
+          method: ANY
     environment:
       # compose の environment を優先（serverless の変数解決前に渡る）
       APP_STAGE: ${env:APP_STAGE, env:STAGE, self:provider.stage, '${self:custom.defaultStage}'}
 plugins:
   - serverless-offline
   - serverless-python-requirements
+

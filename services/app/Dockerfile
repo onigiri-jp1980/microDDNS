@@ -9,19 +9,23 @@ RUN set -xe && apk update &&apk add --no-cache bash shadow sudo &&\
     groupmod -g ${GROUP_ID} -n ${GROUP_NAME} node && \
     echo "${USER_NAME} ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers.d/${USER_NAME}
     
-
-FROM base AS builder
+#ローカル開発環境
+FROM base AS app
 ARG SERVERLESS_PLUGINS="serverless-offline serverless-python-requirements"
 ARG PYTHON_MINIMAL="python3 python3-dev py3-pip"
 ARG PIP_INSTALL_OPTIONS="--no-cache-dir --break-system-packages"
+ARG ADDITIONAL_PACKAGES="aws-cli"
 COPY ./code/requirements.txt /tmp/
-RUN set -xe && apk add --no-cache ${PYTHON_MINIMAL} && \
+RUN set -xe && apk add --no-cache ${PYTHON_MINIMAL} ${ADDITIONAL_PACKAGES} && \
     pip install ${PIP_INSTALL_OPTIONS} -r /tmp/requirements.txt && \
     rm -rf /tmp/requirements.txt
 USER ${USER_NAME}
 WORKDIR /app
 COPY ./services/app/bashrc ${USER_HOME}/.bashrc
+COPY ./services/app/aws/config ${USER_HOME}/.aws/config
+COPY ./services/app/aws/credentials ${USER_HOME}/.aws/credentials
+COPY ./code/package.json .
 COPY ./code/serverless.yml .
-RUN sudo npm install -g osls && sls plugin install -n ${SERVERLESS_PLUGINS}
+RUN sudo npm install -g osls && npm install
 CMD ["bash"]
 

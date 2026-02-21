@@ -1,3 +1,4 @@
 fastapi
 pynamodb
 mangum
+boto3
