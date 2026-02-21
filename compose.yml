@@ -24,10 +24,24 @@ services:
     ports:
       - 4566:4566
     environment:
-      - SERVICES=s3,DYNAMODB
+      - SERVICES=s3,dynamodb
       - AWS_DEFAULT_REGION=ap-northeast-1
       - AWS_ACCESS_KEY_ID=test
       - AWS_SECRET_ACCESS_KEY=test
     volumes:
       - ./services/localstack/data:/persisted-data
     command: localstack start
+  dynamodb-admin:
+    image: aaronshaf/dynamodb-admin:latest
+    ports:
+      - 8001:8001
+    environment:
+      - AWS_REGION=ap-northeast-1
+      - AWS_ACCESS_KEY_ID=test
+      - AWS_SECRET_ACCESS_KEY=test
+      - HOST=0.0.0.0
+      - PORT=8001
+      - DYNAMO_ENDPOINT=http://localstack:4566
+    volumes:
+      - ./services/dynamodb-admin/data:/data
+
