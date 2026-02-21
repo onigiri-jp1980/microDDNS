@@ -1,0 +1,2 @@
+export PATH=${PATH}:~/.lococal/bin
+export PS1='\[\e[0m\][\[\e[0;93m\]\u[\e[0m\]@\[\e[92m\]\h\[\e[0m\] \[\e[096m\]\W\[\e[0m\]]$ '

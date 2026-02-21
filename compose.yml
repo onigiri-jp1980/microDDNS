@@ -1,0 +1,17 @@
+services:
+  app:
+    build:
+      context: .
+      dockerfile: services/app/Dockerfile
+      args:
+        - USER_NAME=${USER_NAME:-app}
+        - USER_ID=${USER_ID:-1000}
+        - GROUP_NAME=${GROUP_NAME:-app}
+        - GROUP_ID=${GROUP_ID:-1000}
+    ports:
+      - 3000:3000
+    environment:
+      - NODE_ENV=development
+    volumes:
+      - ./code:/app
+    command: sls offline start --host 0.0.0.0 --httpPort 3000 --stage development

@@ -1,0 +1,32 @@
+service: microDDNS
+frameworkVersion: '3'
+
+provider:
+  name: aws
+  runtime: python3.12
+  stage: ${opt:stage, 'dev'}
+
+custom:
+  defaultStage:
+    description: "Default stage if not specified"
+    value: dev
+  otherfile:
+    dev: $(file(envs/dev.yml))
+    prod: $(file(envs/prod.yml))
+    local: $(file(envs/local.yml))
+
+package:
+  exclude:
+    - node_modules/**
+functions:
+  microDDNS:
+    handler: app.handler
+    events:
+      - httpApi: '*'
+        path: /{proxy+}
+    environment:
+      otherfile
+      APP_STAGE: ${self:provider.stage, 'dev'}
+plugins:
+  - serverless-offline
+  - serverless-python-requirements
