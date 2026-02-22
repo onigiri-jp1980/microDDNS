@@ -16,9 +16,12 @@ services:
       - STAGE=local
       - NODE_ENV=development
       - AWS_ENDPOINT_URL=http://localstack:4566
+      - CLOUDFLARE_API_TOKEN=${CLOUDFLARE_API_TOKEN:-test}
+      - CLOUDFLARE_ACCOUNT_ID=${CLOUDFLARE_ACCOUNT_ID:-test}
     volumes:
       - ./code:/app
-    command: sls offline start --host 0.0.0.0 --httpPort 3000 --stage local
+      - ~/.aws:/home/${USER_NAME}/.aws
+    command: sls offline start --host 0.0.0.0 --httpPort 3000 --reloadHandler --stage local
   localstack:
     image: gresau/localstack-persist:4
     ports:

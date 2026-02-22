@@ -21,7 +21,7 @@ package:
     - node_modules/**
 functions:
   microDDNS:
-    handler: app.handler
+    handler: main.handler
     timeout: 10
     events:
       - httpApi:
