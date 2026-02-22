@@ -13,7 +13,7 @@ RUN set -xe && apk update &&apk add --no-cache bash shadow sudo &&\
 FROM base AS app
 ARG SERVERLESS_PLUGINS="serverless-offline serverless-python-requirements"
 ARG PYTHON_MINIMAL="python3 python3-dev py3-pip"
-ARG PIP_INSTALL_OPTIONS="--no-cache-dir --break-system-packages"
+ARG PIP_INSTALL_OPTIONS="--no-cache-dir --break-system-packages --pre"
 ARG ADDITIONAL_PACKAGES="aws-cli"
 COPY ./code/requirements.txt /tmp/
 RUN set -xe && apk add --no-cache ${PYTHON_MINIMAL} ${ADDITIONAL_PACKAGES} && \

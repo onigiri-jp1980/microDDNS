@@ -2,3 +2,4 @@ fastapi
 pynamodb
 mangum
 boto3
+cloudflare
