@@ -1,5 +1,6 @@
-from fastapi import APIRouter, Request
+from fastapi import APIRouter, Request,Depends
 from app.controllers import get_buckets, show_envs
+from app.services.request import RequestService
 
 api_router = APIRouter(prefix="/api")
 
@@ -12,6 +13,6 @@ def get_buckets():
     return get_buckets()
 
 @api_router.get("/dump")
-def dump(request: Request):
-    return {"aws.event": request.scope.get('aws.event'), 
-     "aws.context": request.scope.get('aws.context')}
+def dump(request: Request = Depends(RequestService)):
+    return {"aws.event": request.aws_event, 
+     "aws.context": request.aws_context}
