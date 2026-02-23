@@ -15,7 +15,7 @@ ARG SERVERLESS_PLUGINS="serverless-offline serverless-python-requirements"
 ARG PYTHON_MINIMAL="python3 python3-dev py3-pip"
 ARG PIP_INSTALL_OPTIONS="--no-cache-dir --break-system-packages --pre"
 ARG ADDITIONAL_PACKAGES="aws-cli"
-COPY ./code/requirements.txt /tmp/
+COPY ./code/backend/requirements.txt /tmp/
 RUN set -xe && apk add --no-cache ${PYTHON_MINIMAL} ${ADDITIONAL_PACKAGES} && \
     pip install ${PIP_INSTALL_OPTIONS} -r /tmp/requirements.txt && \
     rm -rf /tmp/requirements.txt
@@ -24,8 +24,8 @@ WORKDIR /app
 COPY ./services/app/bashrc ${USER_HOME}/.bashrc
 COPY ./services/app/aws/config ${USER_HOME}/.aws/config
 COPY ./services/app/aws/credentials ${USER_HOME}/.aws/credentials
-COPY ./code/package.json .
-COPY ./code/serverless.yml .
+COPY ./code/backend/package.json .
+COPY ./code/backend/serverless.yml .
 RUN sudo npm install -g osls && npm install
 CMD ["bash"]
 
