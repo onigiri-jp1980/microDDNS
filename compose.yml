@@ -21,7 +21,7 @@ services:
       - CLOUDFLARE_EMAIL=${CLOUDFLARE_EMAIL:-test}
       - COGNITO_USER_POOL_ID=${COGNITO_USER_POOL_ID:-test}
       - COGNITO_CLIENT_ID=${COGNITO_CLIENT_ID:-test}
-      - COGNITO_CLIENT_SECRET=${COGNITO_CLIENT_SECRET:-test}}
+      - COGNITO_CLIENT_SECRET=${COGNITO_CLIENT_SECRET:-test}
     volumes:
       - ./code:/app
       - ~/.aws:/home/${USER_NAME}/.aws
