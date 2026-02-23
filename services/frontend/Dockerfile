@@ -11,14 +11,13 @@ RUN set -xe && apk update &&apk add --no-cache bash shadow sudo &&\
     
 #ローカル開発環境
 FROM base AS frontend
-COPY ./code/frontend /app
-USER ${USER_NAME}
 WORKDIR /app
-COPY ./services/frontend/bashrc ${USER_HOME}/.bashrc
+COPY ./services/common/bashrc ${USER_HOME}/.bashrc
 COPY ./code/frontend/package.json .
 COPY ./code/frontend/tsconfig.json .
 COPY ./code/frontend/tsconfig.app.json .
 COPY ./code/frontend/tsconfig.node.json .
 COPY ./code/frontend/src .
-RUN npm install
+RUN npm install && chown -R ${USER_ID}:${GROUP_ID} /app
+USER ${USER_NAME}
 ENTRYPOINT ["bash"]

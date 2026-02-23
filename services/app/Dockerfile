@@ -21,7 +21,7 @@ RUN set -xe && apk add --no-cache ${PYTHON_MINIMAL} ${ADDITIONAL_PACKAGES} && \
     rm -rf /tmp/requirements.txt
 USER ${USER_NAME}
 WORKDIR /app
-COPY ./services/app/bashrc ${USER_HOME}/.bashrc
+COPY ./services/common/bashrc ${USER_HOME}/.bashrc
 COPY ./services/app/aws/config ${USER_HOME}/.aws/config
 COPY ./services/app/aws/credentials ${USER_HOME}/.aws/credentials
 COPY ./code/backend/package.json .
