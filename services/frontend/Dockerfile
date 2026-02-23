@@ -17,7 +17,8 @@ COPY ./code/frontend/package.json .
 COPY ./code/frontend/tsconfig.json .
 COPY ./code/frontend/tsconfig.app.json .
 COPY ./code/frontend/tsconfig.node.json .
+COPY ./code/frontend/vite.config.ts .
 COPY ./code/frontend/src .
 RUN npm install && chown -R ${USER_ID}:${GROUP_ID} /app
 USER ${USER_NAME}
-ENTRYPOINT ["bash"]
+CMD ["npm", "run", "dev"]
