@@ -1,0 +1,64 @@
+services:
+  app:
+    build:
+      context: .
+      dockerfile: services/app/Dockerfile
+      args:
+        - USER_NAME=${USER_NAME:-app}
+        - USER_ID=${USER_ID:-1000}
+        - GROUP_NAME=${GROUP_NAME:-app}
+        - GROUP_ID=${GROUP_ID:-1000}
+      target: app
+    ports:
+      - 13000:3000
+    environment:
+      - APP_STAGE=local
+      - STAGE=local
+      - NODE_ENV=development
+      - AWS_ENDPOINT_URL=http://localstack:4566
+      - CLOUDFLARE_API_TOKEN=${CLOUDFLARE_API_TOKEN:-test}
+      - CLOUDFLARE_ACCOUNT_ID=${CLOUDFLARE_ACCOUNT_ID:-test}
+      - CLOUDFLARE_EMAIL=${CLOUDFLARE_EMAIL:-test}
+      - COGNITO_USER_POOL_ID=${COGNITO_USER_POOL_ID:-test}
+      - COGNITO_CLIENT_ID=${COGNITO_CLIENT_ID:-test}
+      - COGNITO_CLIENT_SECRET=${COGNITO_CLIENT_SECRET:-test}
+    volumes:
+      - ./code/backend:/app
+      - ~/.aws:/home/${USER_NAME}/.aws
+    command: sls offline start --host 0.0.0.0 --httpPort 3000 --reloadHandler --stage local
+  localstack:
+    image: gresau/localstack-persist:4
+    ports:
+      - 4566:4566
+    environment:
+      - SERVICES=s3,dynamodb
+      - AWS_DEFAULT_REGION=ap-northeast-1
+      - AWS_ACCESS_KEY_ID=test
+      - AWS_SECRET_ACCESS_KEY=test
+    volumes:
+      - ./services/localstack/data:/persisted-data
+    command: localstack start
+  dynamodb-admin:
+    image: aaronshaf/dynamodb-admin:latest
+    ports:
+      - 8001:8001
+    environment:
+      - AWS_REGION=ap-northeast-1
+      - AWS_ACCESS_KEY_ID=test
+      - AWS_SECRET_ACCESS_KEY=test
+      - HOST=0.0.0.0
+      - PORT=8001
+      - DYNAMO_ENDPOINT=http://localstack:4566
+    volumes:
+      - ./services/dynamodb-admin/data:/data
+
+  frontend:
+    build:
+      context: .
+      dockerfile: services/frontend/Dockerfile
+    ports:
+      - 80:3000
+    volumes:
+      - ./code/frontend:/app
+      - /app/node_modules  # ビルド時のnode_modulesを保持（ホストマウントで上書きしない）
+    command: npm run dev
