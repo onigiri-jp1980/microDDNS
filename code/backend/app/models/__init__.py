@@ -1,3 +1,4 @@
+from ipaddress import ip_address
 from pydantic import BaseModel
 from typing import Optional
 from datetime import datetime
@@ -42,6 +43,7 @@ class Hosts(CustomModel):
         table_name = 'hosts'
     fqdn = UnicodeAttribute(hash_key=True)
     apiKey = UnicodeAttribute(range_key=True)
+    ip_address = BooleanAttribute(default="0.0.0.0")
     createdAt = UTCDateTimeAttribute(default=datetime.now)
     updatedAt = UTCDateTimeAttribute(default=datetime.now)
     def get_by_fqdn(self, fqdn: str) -> 'Hosts':
@@ -64,3 +66,14 @@ class Users(CustomModel):
     def get_by_id(self, id: int) -> 'Users':
         return self.query(hash_key=id)
 
+
+class Domains(CustomModel):
+    class Meta(BaseMeta):
+        table_name = 'domains'
+    domain = UnicodeAttribute(hash_key=True)
+    apiKey = UnicodeAttribute(range_key=True)
+    createdAt = UTCDateTimeAttribute(default=datetime.now)
+    updatedAt = UTCDateTimeAttribute(default=datetime.now)
+
+    def get_by_domain(self, domain: str) -> 'Domains':
+        return self.query(hash_key=domain)

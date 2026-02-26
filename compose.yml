@@ -57,7 +57,7 @@ services:
       context: .
       dockerfile: services/frontend/Dockerfile
     ports:
-      - 80:3000
+      - 13001:3000
     volumes:
       - ./code/frontend:/app
       - /app/node_modules  # ビルド時のnode_modulesを保持（ホストマウントで上書きしない）

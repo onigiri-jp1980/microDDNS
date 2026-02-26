@@ -18,7 +18,6 @@ RUN set -xe && apk update &&apk add --no-cache bash shadow sudo &&\
     
 #ローカル開発環境
 FROM base AS app
-ARG SERVERLESS_PLUGINS="serverless-offline serverless-python-requirements"
 ARG PYTHON_MINIMAL="python3 python3-dev py3-pip"
 ARG PIP_INSTALL_OPTIONS="--no-cache-dir --break-system-packages --pre"
 ARG ADDITIONAL_PACKAGES="aws-cli"
@@ -33,6 +32,6 @@ COPY ./services/app/aws/config ${USER_HOME}/.aws/config
 COPY ./services/app/aws/credentials ${USER_HOME}/.aws/credentials
 COPY ./code/backend/package.json .
 COPY ./code/backend/serverless.yml .
-RUN sudo npm install -g osls && npm install
+RUN sudo npm install -g osls && npm install 
 CMD ["bash"]
 

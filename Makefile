@@ -61,7 +61,7 @@ permission:
 .PHONY: permission
 
 setup:
-	$(set_env_vars) docker compose run --rm app npm installc
+	$(set_env_vars) docker compose run --rm app npm install
 .PHONY: setup
 
 login:
