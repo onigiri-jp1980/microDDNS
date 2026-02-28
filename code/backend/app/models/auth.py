@@ -1,4 +1,4 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
 class AuthRequest(BaseModel):
     email: str
@@ -6,7 +6,11 @@ class AuthRequest(BaseModel):
 
 
 class AuthResponse(BaseModel):
-    accessToken: str
-    idToken: str
-    refreshToken: str
-    expiresIn: int
+    AccessToken: str
+    IdToken: str
+    RefreshToken: str
+    ExpiresIn: int
+    TokenType: str
+
+class AuthErrorResponse(BaseModel):
+    detail: str

@@ -32,36 +32,42 @@ ps:
 .PHONY: ps
 
 down:
-	$(set_env_vars) docker compose down --remove-orphans --rmi all
+	$(set_env_vars) docker compose down --remove-orphans --rmi local
 .PHONY: down
 
 restart:
+	@echo "Restarting the services..."
 	$(set_env_vars) docker compose down && $(set_env_vars) docker compose up -d
 .PHONY: restart
 
 reload:
+	@echo "Rebuilding and restarting the services..."
 	$(set_env_vars) docker compose down && $(set_env_vars) docker compose up -d --build
 .PHONY: reload
 
 build:
+	@echo "Building the services..."
 	$(set_env_vars) docker compose build --no-cache
 .PHONY: build
 
 bash:
+	@echo "Running bash in app container..."
 	$(set_env_vars) docker compose exec app bash
 .PHONY: bash
 
 shell:
 	@echo "Running shell in app container"
 	$(set_env_vars) docker compose run --rm app bash
-.PHONY: run
+.PHONY: shell
 permission:
 	@echo "Setting permissions for app container"
 	$(set_env_vars) docker compose run --rm app sudo chown ${USER_NAME} -R ~${USER_NAME}/.{local,cache,config}
+	@echo "Setting permissions for app container...done"
 .PHONY: permission
 
+sls_plugins := serverless-offline serverless-python-requirements
 setup:
-	$(set_env_vars) docker compose run --rm app npm install
+	$(set_env_vars) docker compose run --rm app sls plugin install -n ${sls_plugins}
 .PHONY: setup
 
 login:

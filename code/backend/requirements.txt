@@ -1,4 +1,5 @@
 fastapi
+fastapi-cognito
 pynamodb
 mangum
 boto3
