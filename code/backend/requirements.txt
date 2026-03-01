@@ -1,5 +1,5 @@
 fastapi
-fastapi-cognito
+fastapi-cloudauth
 pynamodb
 mangum
 boto3

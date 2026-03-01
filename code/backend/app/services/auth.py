@@ -1,15 +1,19 @@
 #! /usr/bin/env python3
 import base64
+import json
+import requests
 import hmac
 import hashlib
 from os import environ as env
 from argparse import ArgumentParser
 from boto3 import Session
 from botocore.exceptions import ClientError
+from fastapi_cloudauth.cognito import Cognito
 
 
 def _get_env(key: str, default: str) -> str:
     return env.get(key, default)
+
 
 
 class SecretHashService:
@@ -30,16 +34,17 @@ class SecretHashService:
 
 
 class CognitoService:
-    def __init__(self, user_pool_id: str | None = None,
-                 email: str | None = None,
-                 client_id: str | None = None,
-                 client_secret: str | None = None,
-                 region: str | None = None):
-        self.user_pool_id = user_pool_id or _get_env('COGNITO_USER_POOL_ID', 'test')
-        self.client_id = client_id or _get_env('COGNITO_CLIENT_ID', 'test')
-        self.secret_hash = SecretHashService(email, client_id, client_secret)
-        self.region = region or _get_env('AWS_REGION', 'ap-northeast-1')
+    def __init__(self):
+        self.user_pool_id = _get_env('COGNITO_USER_POOL_ID', 'test')
+        self.client_id = _get_env('COGNITO_CLIENT_ID', 'test')
+        self.client_secret = _get_env('COGNITO_CLIENT_SECRET', 'test')
+        self.region = _get_env('AWS_REGION', 'ap-northeast-1')
         self.client = self._get_client()
+        self.cognito = Cognito(
+            userPoolId=self.user_pool_id,
+            client_id=self.client_id,
+            region=self.region
+        )
 
     def _get_client(self):
         # localstackのFree版ではCognitoが使えないので
@@ -51,13 +56,14 @@ class CognitoService:
     def get_client_id(self):
         return self.client_id
     def sign_in(self, email: str, password: str):
+        secret_hash = SecretHashService(email, self.client_id, self.client_secret).get()
         try:
             return self.client.initiate_auth(
                 ClientId=self.client_id,
                 AuthFlow='USER_PASSWORD_AUTH',
                 AuthParameters={'USERNAME': email, 
                   'PASSWORD': password, 
-                  'SECRET_HASH': self.secret_hash.get()}
+                  'SECRET_HASH': secret_hash}
             )['AuthenticationResult']
         except ClientError as e:
             raise e
@@ -65,7 +71,4 @@ class CognitoService:
         return self.client.get_user(
             AccessToken=access_token
         )['UserAttributes']
-    def verify_token(self, access_token: str):
-        return self.client.verify_token(
-            AccessToken=access_token
-        )
+

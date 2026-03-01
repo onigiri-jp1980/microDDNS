@@ -1,7 +1,9 @@
 from fastapi import APIRouter, Depends
 from app.models.auth import AuthRequest, AuthResponse, AuthErrorResponse
-from app.controllers.auth import sign_in, verify_token
-
+from app.controllers.auth import sign_in, verify_token, create_api_key
+from app.middleswares.auth import JwtAuthMiddleware, ApiKeyAuthMiddleware
+from app.models import ApiKeys
+from app.utils import get_user_attr_value
 auth_router = APIRouter(prefix="/auth")
 
 
@@ -34,3 +36,17 @@ def login(result: AuthResponse = Depends(sign_in)) -> AuthResponse:
     },
   },
   tags=["auth"])
+def verify(access_token: str):
+    return {"access_token": access_token}
+
+@auth_router.get("/get-api-key", dependencies=[Depends(JwtAuthMiddleware)])
+def get_api_key(user_attributes=Depends(JwtAuthMiddleware)):
+  """JWT 認証後、Cognito のユーザー属性を返す。"""
+  user_id = get_user_attr_value(user_attributes, 'sub')
+  return create_api_key(user_id)
+
+
+@auth_router.get("/verify-api-key", dependencies=[Depends(ApiKeyAuthMiddleware)])
+def verify_api_key(api_key: ApiKeys = Depends(ApiKeyAuthMiddleware)):
+  """x-api-key で認証し、一致した ApiKey 情報を返す。"""
+  return api_key._as_dict()
