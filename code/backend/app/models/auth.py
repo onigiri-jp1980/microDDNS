@@ -14,3 +14,6 @@ class AuthResponse(BaseModel):
 
 class AuthErrorResponse(BaseModel):
     detail: str
+
+class ApiKeyResponse(BaseModel):
+    apiKey: str

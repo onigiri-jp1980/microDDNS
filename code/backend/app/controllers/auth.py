@@ -2,7 +2,7 @@ from os import environ as env
 from fastapi import Depends
 from fastapi import HTTPException
 from app.services.auth import CognitoService
-from app.models.auth import AuthResponse, AuthRequest
+from app.models.auth import AuthResponse, AuthRequest, ApiKeyResponse
 from app.models import ApiKeys
 
 
@@ -17,11 +17,11 @@ def verify_token(access_token: str,
   cognito: CognitoService = Depends(get_cognito_service)) -> AuthResponse:
     return cognito.verify_token(access_token)
 
-def create_api_key(user_id: str):
+def create_api_key(user_id: str)->ApiKeyResponse:
   api_key = ApiKeys(userId=user_id)
   try:
     api_key.save()
   except Exception as e:
     raise HTTPException(status_code=500, detail=str(e))
-  return api_key.secret
+  return ApiKeyResponse(apiKey=api_key.secret)
   
