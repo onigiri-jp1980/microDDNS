@@ -4,6 +4,7 @@ frameworkVersion: '3'
 provider:
   name: aws
   runtime: python3.12
+  region: ${env:AWS_REGION, 'ap-northeast-1'}
   # env:STAGE を優先（serverless-offline で --stage が opt に渡らない場合の回避）
   stage: ${env:STAGE, opt:stage, 'dev'}
 

@@ -1,8 +1,52 @@
-from fastapi import APIRouter
-from app.services.auth import CognitoService
-from app.models.auth import AuthRequest, AuthResponse
+from fastapi import APIRouter, Depends
+from app.models.auth import AuthRequest, AuthResponse, AuthErrorResponse
+from app.controllers.auth import sign_in, verify_token, create_api_key
+from app.middleswares.auth import JwtAuthMiddleware, ApiKeyAuthMiddleware
+from app.models import ApiKeys
+from app.utils import get_user_attr_value
 auth_router = APIRouter(prefix="/auth")
 
-@auth_router.post("/login")
-def sign_in(request: AuthRequest)->AuthResponse:
-    return CognitoService(email=request.email).sign_in(request.email, request.password)
+
+@auth_router.post("/login",
+  response_model=AuthResponse,
+  status_code=200,
+  description="ログイン",
+  responses={
+    401: {
+      "description": "Authentication failed",
+      "model": AuthErrorResponse,
+    },
+    404: {
+      "description": "User not Found",
+      "model": AuthErrorResponse,
+    },
+  },
+  tags=["auth"])
+def login(result: AuthResponse = Depends(sign_in)) -> AuthResponse:
+    return result
+
+@auth_router.get("/verify",
+  response_model=AuthResponse,
+  status_code=200,
+  description="トークン検証",
+  responses={
+    401: {
+      "description": "Authentication failed",
+      "model": AuthErrorResponse,
+    },
+  },
+  tags=["auth"])
+def verify(access_token: str):
+    return {"access_token": access_token}
+
+@auth_router.get("/get-api-key", dependencies=[Depends(JwtAuthMiddleware)])
+def get_api_key(user_attributes=Depends(JwtAuthMiddleware)):
+  """JWT 認証後、Cognito のユーザー属性を返す。"""
+  user_id = get_user_attr_value(user_attributes, 'sub')
+  return create_api_key(user_id)
+
+
+@auth_router.get("/verify-api-key", dependencies=[Depends(ApiKeyAuthMiddleware)])
+def verify_api_key(api_key: ApiKeys = Depends(ApiKeyAuthMiddleware)):
+  """x-api-key で認証し、一致した ApiKey 情報を返す。"""
+  return api_key._as_dict()

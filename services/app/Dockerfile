@@ -35,3 +35,15 @@ COPY ./code/backend/serverless.yml .
 RUN sudo npm install -g osls && npm install 
 CMD ["bash"]
 
+# デプロイ用イメージ
+FROM python:3.12-slim AS deploy
+COPY public.ecr.aws/awsguru/aws-lambda-adapter:0.9.1 /lambda-adapter /opt/extensions/lambda-adapter
+ARG USER_NAME=app
+ARG USER_HOME=/home/${USER_NAME}
+ARG USER_ID=1000
+ARG GROUP_NAME=app
+ARG GROUP_ID=1000
+WORKDIR /app
+COPY ./code/backend .
+    
+CMD ["main.handler"]

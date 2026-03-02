@@ -15,6 +15,7 @@ services:
       - APP_STAGE=local
       - STAGE=local
       - NODE_ENV=development
+      - AWS_REGION=${AWS_REGION:-ap-northeast-1}
       - AWS_ENDPOINT_URL=http://localstack:4566
       - CLOUDFLARE_API_TOKEN=${CLOUDFLARE_API_TOKEN:-test}
       - CLOUDFLARE_ACCOUNT_ID=${CLOUDFLARE_ACCOUNT_ID:-test}

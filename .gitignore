@@ -208,6 +208,6 @@ __marimo__/
 
 # serverless framework
 node_modules/
+.serverless
 
-# pyenv python version
-.python-version
+services/*/data/
