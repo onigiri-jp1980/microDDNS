@@ -17,10 +17,10 @@ RUN set -xe && apk update &&apk add --no-cache bash shadow sudo &&\
     echo "${USER_NAME} ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers.d/${USER_NAME}
     
 #ローカル開発環境
-FROM base AS app
+FROM base AS local
 ARG PYTHON_MINIMAL="python3 python3-dev py3-pip"
 ARG PIP_INSTALL_OPTIONS="--no-cache-dir --break-system-packages --pre"
-ARG ADDITIONAL_PACKAGES="aws-cli"
+ARG ADDITIONAL_PACKAGES="aws-cli curl"
 COPY ./code/backend/requirements.txt /tmp/
 RUN set -xe && apk add --no-cache ${PYTHON_MINIMAL} ${ADDITIONAL_PACKAGES} && \
     pip install ${PIP_INSTALL_OPTIONS} -r /tmp/requirements.txt && \
