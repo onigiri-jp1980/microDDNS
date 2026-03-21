@@ -50,6 +50,10 @@ build:
 	$(set_env_vars) docker compose build --no-cache
 .PHONY: build
 
+deploy-image:
+	@echo "Building the deploy image..."
+	$(set_env_vars) docker compose -f compose.deploy.yml build
+.PHONY: deploy-image
 bash:
 	@echo "Running bash in app container..."
 	$(set_env_vars) docker compose exec app bash
@@ -83,3 +87,4 @@ cf-token-url:
 	command -v open >/dev/null 2>&1 && open "$(CF_TOKEN_URL)" || \
 	echo "Please open the URL above in your browser"
 .PHONY: cf-token-url
+

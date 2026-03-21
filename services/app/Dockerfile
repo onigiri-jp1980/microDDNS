@@ -36,8 +36,8 @@ RUN sudo npm install -g osls && npm install
 CMD ["bash"]
 
 # デプロイ用イメージ
-FROM python:3.12-slim AS deploy
-COPY public.ecr.aws/awsguru/aws-lambda-adapter:0.9.1 /lambda-adapter /opt/extensions/lambda-adapter
+FROM python:3.12-alpine AS deploy
+COPY --from=public.ecr.aws/awsguru/aws-lambda-adapter:0.9.1 /lambda-adapter /opt/extensions/lambda-adapter
 ARG USER_NAME=app
 ARG USER_HOME=/home/${USER_NAME}
 ARG USER_ID=1000

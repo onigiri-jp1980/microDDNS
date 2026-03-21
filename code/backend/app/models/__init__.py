@@ -33,8 +33,10 @@ class ApiKeys(CustomModel):
     createdAt = UTCDateTimeAttribute(default=datetime.now)
     updatedAt = UTCDateTimeAttribute(default=datetime.now)
     isActive = BooleanAttribute(default=True)
+    @classmethod
     def get_by_secret(self, secret: str) -> 'ApiKeys':
         return self.query(hash_key=secret)
+    @classmethod
     def get_by_user_id(self, user_id: str) -> 'ApiKeys':
         return self.query(hash_key=user_id)
 

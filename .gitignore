@@ -214,3 +214,6 @@ services/*/data/
 
 # pyenv python version
 .python-version
+
+
+memo.md

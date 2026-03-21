@@ -19,9 +19,11 @@ def ApiKeyAuthMiddleware(request: Request = Depends(RequestService)):
     """x-api-key を検証し、一致した ApiKeys を返す依存関係。ルーターで Depends(ApiKeyAuthMiddleware) として利用する。"""
     headers = request.aws_event.get("headers") or {}
     api_key_header = headers.get("x-api-key")
+    print(f"headers-> {headers}")
     if not api_key_header:
         raise HTTPException(status_code=401, detail="Unauthorized")
-    verified = next(ApiKeys().get_by_secret(api_key_header), None)
-    if verified is None:
+    verified = next(ApiKeys.get_by_secret(api_key_header), None)
+    print(f"verified-> {verified}")
+    if (verified is None) or (not verified.isActive):
         raise HTTPException(status_code=401, detail="Unauthorized")
     return verified

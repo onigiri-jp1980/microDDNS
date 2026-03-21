@@ -2,7 +2,6 @@ from os import listdir,path
 from fastapi import APIRouter, Request,Depends
 from app.controllers import show_envs
 from app.services.request import RequestService
-from app.routers.auth import auth_router
 from app.middleswares.auth import JwtAuthMiddleware, ApiKeyAuthMiddleware
 from importlib import import_module as import_module_func
 

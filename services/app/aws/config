@@ -1,4 +1,4 @@
+# Sample AWS cli config
 [default]
 region = ap-northeast-1
 output = json
-aws_endpoint_url=http://localstack:4566
