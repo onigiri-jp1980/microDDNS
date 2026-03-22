@@ -24,6 +24,8 @@ class CustomModel(Model):
             for k, v in self.__dict__.items()
             if not k.startswith('_')
         }
+    def get_all(self) -> list:
+        return [host._as_dict()['attribute_values'] for host in list(self.scan()) if host.isActive]
 
 class ApiKeys(CustomModel):
     class Meta(BaseMeta):
@@ -45,7 +47,8 @@ class Hosts(CustomModel):
         table_name = 'hosts'
     fqdn = UnicodeAttribute(hash_key=True)
     apiKey = UnicodeAttribute(range_key=True)
-    ip_address = BooleanAttribute(default="0.0.0.0")
+    ipAddress = UnicodeAttribute(default="0.0.0.0")
+    isActive = BooleanAttribute(default=True)
     createdAt = UTCDateTimeAttribute(default=datetime.now)
     updatedAt = UTCDateTimeAttribute(default=datetime.now)
     def get_by_fqdn(self, fqdn: str) -> 'Hosts':
@@ -74,6 +77,7 @@ class Domains(CustomModel):
         table_name = 'domains'
     domain = UnicodeAttribute(hash_key=True)
     apiKey = UnicodeAttribute(range_key=True)
+    isActive = BooleanAttribute(default=True)
     createdAt = UTCDateTimeAttribute(default=datetime.now)
     updatedAt = UTCDateTimeAttribute(default=datetime.now)
 

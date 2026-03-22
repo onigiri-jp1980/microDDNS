@@ -4,5 +4,5 @@ from boto3 import Session
 from os import environ
 from app.routers import api_router
 
-app = FastAPI(trailing_slash=False)
+app = FastAPI(redirect_slashes=False)
 app.include_router(api_router)
