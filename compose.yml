@@ -33,10 +33,10 @@ services:
     ports:
       - 14566:4566
     environment:
-      # - SERVICES=s3,dynamodb
-      # - AWS_DEFAULT_REGION=ap-northeast-1
-      # - AWS_ACCESS_KEY_ID=test
-      # - AWS_SECRET_ACCESS_KEY=test
+      - SERVICES=s3,dynamodb
+      - AWS_DEFAULT_REGION=ap-northeast-1
+      - AWS_ACCESS_KEY_ID=test
+      - AWS_SECRET_ACCESS_KEY=test
     volumes:
       - ./services/localstack/data:/persisted-data
     command: localstack start
