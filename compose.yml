@@ -28,14 +28,15 @@ services:
       - ~/.aws:/home/${USER_NAME}/.aws
     command: sls offline start --host 0.0.0.0 --httpPort 3000 --reloadHandler --stage local
   localstack:
+    #image: gresau/localstack-persist:4
     image: gresau/localstack-persist:4
     ports:
-      - 4566:4566
+      - 14566:4566
     environment:
-      - SERVICES=s3,dynamodb
-      - AWS_DEFAULT_REGION=ap-northeast-1
-      - AWS_ACCESS_KEY_ID=test
-      - AWS_SECRET_ACCESS_KEY=test
+      # - SERVICES=s3,dynamodb
+      # - AWS_DEFAULT_REGION=ap-northeast-1
+      # - AWS_ACCESS_KEY_ID=test
+      # - AWS_SECRET_ACCESS_KEY=test
     volumes:
       - ./services/localstack/data:/persisted-data
     command: localstack start
@@ -52,7 +53,15 @@ services:
       - DYNAMO_ENDPOINT=http://localstack:4566
     volumes:
       - ./services/dynamodb-admin/data:/data
-
+  floci:
+    container_name: floci
+    image: hectorvent/floci
+    ports:
+      - 4566:4566
+    environment:
+      - FLOCI_STORAGE_MODE=persist
+    volumes:
+      - ./services/floci/data:/app/data
   frontend:
     build:
       context: .
