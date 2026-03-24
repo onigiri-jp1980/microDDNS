@@ -48,9 +48,7 @@ class CognitoService:
 
     def _get_client(self):
         # localstackのFree版ではCognitoが使えないので
-        endpoint_url = f"https://cognito-idp.{self.region}.amazonaws.com" if _get_env('APP_STAGE', '') == 'local' else None
-        return Session(region_name=self.region).client(
-            'cognito-idp', endpoint_url=endpoint_url)
+        return Session(region_name=self.region).client('cognito-idp')
     def get_user_pool_id(self):
         return self.user_pool_id
     def get_client_id(self):

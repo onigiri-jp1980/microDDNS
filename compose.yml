@@ -16,7 +16,7 @@ services:
       - STAGE=local
       - NODE_ENV=development
       - AWS_REGION=${AWS_REGION:-ap-northeast-1}
-      - AWS_ENDPOINT_URL=http://localstack:4566
+      - AWS_ENDPOINT_URL=http://floci:4566
       - CLOUDFLARE_API_TOKEN=${CLOUDFLARE_API_TOKEN:-test}
       - CLOUDFLARE_ACCOUNT_ID=${CLOUDFLARE_ACCOUNT_ID:-test}
       - CLOUDFLARE_EMAIL=${CLOUDFLARE_EMAIL:-test}
@@ -38,8 +38,9 @@ services:
       # - AWS_ACCESS_KEY_ID=test
       # - AWS_SECRET_ACCESS_KEY=test
     volumes:
-      - ./services/localstack/data:/persisted-data
-    command: localstack start
+      #- ./services/localstack/data:/persisted-data
+      - ./services/localstack/data:/app/data
+    #command: localstack start
   dynamodb-admin:
     image: aaronshaf/dynamodb-admin:latest
     ports:
@@ -50,7 +51,7 @@ services:
       - AWS_SECRET_ACCESS_KEY=test
       - HOST=0.0.0.0
       - PORT=8001
-      - DYNAMO_ENDPOINT=http://localstack:4566
+      - DYNAMO_ENDPOINT=http://floci:4566
     volumes:
       - ./services/dynamodb-admin/data:/data
   floci:
