@@ -21,6 +21,7 @@ FROM base AS local
 ARG PYTHON_MINIMAL="python3 python3-dev py3-pip"
 ARG PIP_INSTALL_OPTIONS="--no-cache-dir --break-system-packages --pre"
 ARG ADDITIONAL_PACKAGES="aws-cli curl"
+ARG SLS_PLUGINS="serverless-offline serverless-python-requirements"
 COPY ./code/backend/requirements.txt /tmp/
 RUN set -xe && apk add --no-cache ${PYTHON_MINIMAL} ${ADDITIONAL_PACKAGES} && \
     pip install ${PIP_INSTALL_OPTIONS} -r /tmp/requirements.txt && \
@@ -32,7 +33,7 @@ COPY ./services/app/aws/config ${USER_HOME}/.aws/config
 COPY ./services/app/aws/credentials ${USER_HOME}/.aws/credentials
 COPY ./code/backend/package.json .
 COPY ./code/backend/serverless.yml .
-RUN sudo npm install -g osls && npm install 
+RUN sudo npm install -g osls && sls plugin install -n ${SLS_PLUGINS} && npm install 
 CMD ["bash"]
 
 # デプロイ用イメージ
