@@ -12,7 +12,7 @@ from pynamodb.attributes import Attribute
 _is_local = (env.get('APP_ENV') or env.get('APP_STAGE')) == 'local'
 
 class BaseMeta:
-    region = 'ap-northeast-1'
+    region = 'ap-northeast-1' or env.get('AWS_REGION', 'ap-northeast-1')
     aws_access_key_id = env.get('AWS_ACCESS_KEY_ID', 'test') if _is_local else env.get('AWS_ACCESS_KEY_ID')
     aws_secret_access_key = env.get('AWS_SECRET_ACCESS_KEY', 'test') if _is_local else env.get('AWS_SECRET_ACCESS_KEY')
     host = env.get('AWS_ENDPOINT_URL') if _is_local else env.get('AWS_ENDPOINT_URL')
@@ -77,6 +77,7 @@ class Domains(CustomModel):
         table_name = 'domains'
     domain = UnicodeAttribute(hash_key=True)
     apiKey = UnicodeAttribute(range_key=True)
+    secret = UnicodeAttribute(null=True)
     isActive = BooleanAttribute(default=True)
     createdAt = UTCDateTimeAttribute(default=datetime.now)
     updatedAt = UTCDateTimeAttribute(default=datetime.now)

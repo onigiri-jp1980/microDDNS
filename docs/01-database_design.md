@@ -8,12 +8,48 @@
 |hosts|ホスト名管理|
 
 ## テーブル設計
+### api_keys
+- APIキー管理
+
+|カラム名|PK|SK|制約|AutoIcrement|Index|Type|用途|
+|:---|:---:|:---:|:---|:---:| :--- | :--- | :--- |
+|secret|◯||NOT NULL|-|HASH(PK)|String(32)|APIシークレット|
+|userId||◯|NOT NULL|-|RANGE(SK)|String(36)|Cognito上のユーザーID|
+|createdAt|||NOT NULL|-|-|datetime|作成日時|
+|updatedAt|||NOT NULL|-|-|datetime|更新日時|
+|isActive|||NOT NULL|False|-|boolean|有効フラグ|
+
+### hosts
+- ホスト名管理
+
+|カラム名|PK|SK|制約|AutoIcrement|Index|Type|用途|
+|:---|:---:|:---:|:---|:---:| :--- | :--- | :--- |
+|fqdn|◯||NOT NULL|-|HASH|string|FQDN（パーティションキー）|
+|apiKey||◯|NOT NULL|-|RANGE|string|APIキー（ソートキー）|
+|ipAddress|||NOT NULL|-|-|string|IPアドレス|
+|isActive||NOT NULL|False|-|boolean|有効フラグ|
+|createdAt|||NOT NULL|-|-|datetime|作成日時|
+|updatedAt|||NOT NULL|-|-|datetime|更新日時|
+
 ### users
 - ユーザー管理
-  - 認証は
 
-|カラム名|P|制約|AutoIcrement|Index|Type|用途|
-|:---|:---:|:---|:---:| :--- | :--- | :--- |
-|email|  |NOT NULL<br /> UNIQUE| - | EMAIL |String(128)|Eメールアドレス|
-|userId |◯| NOT NULL | True | False |integer|ユーザーID|
-|password||NOT NULL|- |- |String(24)|パスワード|
+|カラム名|PK|SK|制約|AutoIcrement|Index|Type|用途|
+|:---|:---:|:---:|:---|:---:| :--- | :--- | :--- |
+|id|◯||NOT NULL|-|HASH|integer|ユーザーID（パーティションキー）|
+|cognitoId||◯|NOT NULL|-|RANGE|string|CognitoユーザーID（ソートキー）|
+|email|||NOT NULL|-|-|string|Eメールアドレス|
+|createdAt|||NOT NULL|-|-|datetime|作成日時|
+|updatedAt|||NOT NULL|-|-|datetime|更新日時|
+
+### domains
+- ドメイン管理
+
+|カラム名|PK|SK|制約|AutoIcrement|Index|Type|用途|
+|:---|:---:|:---:|:---|:---:| :--- | :--- | :--- |
+|domain|◯||NOT NULL|-|HASH|string|ドメイン名（パーティションキー）|
+|apiKey||◯|NOT NULL|-|RANGE|string|APIキー（ソートキー）|
+|secret|||NULL許容|-|-|string|SecetManager/ParameterStoreのARNを格納|
+|isActive|||NOT NULL|False|-|boolean|有効フラグ|
+|createdAt|||NOT NULL|-|-|datetime|作成日時|
+|updatedAt|||NOT NULL|-|-|datetime|更新日時|

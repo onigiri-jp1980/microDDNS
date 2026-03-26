@@ -34,11 +34,14 @@ class SecretHashService:
 
 
 class CognitoService:
-    def __init__(self):
-        self.user_pool_id = _get_env('COGNITO_USER_POOL_ID', 'test')
-        self.client_id = _get_env('COGNITO_CLIENT_ID', 'test')
-        self.client_secret = _get_env('COGNITO_CLIENT_SECRET', 'test')
-        self.region = _get_env('AWS_REGION', 'ap-northeast-1')
+    def __init__(self,user_pool_id: str | None = None,
+      client_id: str | None = None,
+      client_secret: str | None = None, 
+      region: str | None = None):
+        self.user_pool_id = user_pool_id or _get_env('COGNITO_USER_POOL_ID', 'test')
+        self.client_id = client_id or _get_env('COGNITO_CLIENT_ID', 'test')
+        self.client_secret = client_secret or _get_env('COGNITO_CLIENT_SECRET', 'test')
+        self.region = region or _get_env('AWS_REGION', 'ap-northeast-1')
         self.client = self._get_client()
         self.cognito = Cognito(
             userPoolId=self.user_pool_id,
@@ -69,4 +72,11 @@ class CognitoService:
         return self.client.get_user(
             AccessToken=access_token
         )['UserAttributes']
+    def create_user(self, email: str, password: str):
+        return self.client.sign_up(
+            ClientId=self.client_id,
+            Username=email,
+            Password=password,
+            UserAttributes=[{'Name': 'email', 'Value': email}]
+        )
 
