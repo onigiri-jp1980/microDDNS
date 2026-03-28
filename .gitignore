@@ -215,5 +215,7 @@ services/*/data/
 # pyenv python version
 .python-version
 
+# AWS simulators
+services/*/data/
 
 memo.md

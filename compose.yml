@@ -40,6 +40,7 @@ services:
       - DYNAMO_ENDPOINT=http://kumo:4566
     volumes:
       - ./services/dynamodb-admin/data:/data
+
   kumo:
     container_name: kumo
     image: ghcr.io/sivchari/kumo:latest
