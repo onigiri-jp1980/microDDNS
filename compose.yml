@@ -16,9 +16,14 @@ services:
       - STAGE=local
       - NODE_ENV=development
       - AWS_REGION=${AWS_REGION:-ap-northeast-1}
+<<<<<<< Updated upstream
       - AWS_ENDPOINT_URL=http://floci:4566
       - AWS_ENDPOINT_URL_SES=http://kumo:4566
       - AWS_ENDPOINT_URL_SESV2=http://kumo:4566
+=======
+      - AWS_ENDPOINT_URL_SES=http://kumo:4566
+      - AWS_ENDPOINT_URL=http://floci:4566
+>>>>>>> Stashed changes
       - CLOUDFLARE_API_TOKEN=${CLOUDFLARE_API_TOKEN:-test}
       - CLOUDFLARE_ACCOUNT_ID=${CLOUDFLARE_ACCOUNT_ID:-test}
       - CLOUDFLARE_EMAIL=${CLOUDFLARE_EMAIL:-test}
@@ -39,26 +44,24 @@ services:
       - AWS_SECRET_ACCESS_KEY=test
       - HOST=0.0.0.0
       - PORT=8001
-      - DYNAMO_ENDPOINT=http://kumo:4566
+      - DYNAMO_ENDPOINT=http://floci:4566
     volumes:
-      - ./services/dynamodb-admin/data:/data
+      - ./services/dynamodb-admin/data:/app/data
   floci:
     container_name: floci
     image: hectorvent/floci:latest
     ports:
       - 4566:4566
     environment:
-      - FLOCI_STORAGE_MODE=persistent
-      - FLOCI_STORAGE_PERSISTENT_PATH=/app/data
+      - FLOCI_STORAGE_MODE=htbrid
+      - FLOCI_STORAGE_PERSISTENT_PATH=/data
     volumes:
-      - ./services/floci/data:/app/data
-    user: root
-
+      - ./services/floci/data:/data:chmod=777
   kumo:
     container_name: kumo
     image: ghcr.io/sivchari/kumo:latest
     ports:
-      - 14566:4566
+      - 4567:4566
     environment:
       - KUMO_DATADIR=/data
     volumes:
