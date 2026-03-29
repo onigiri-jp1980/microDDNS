@@ -26,7 +26,7 @@ def parse_args():
     parser = ArgumentParser(formatter_class=RawTextHelpFormatter, description=help_descriptions['help'])
     parser.add_argument('--cognito', '-c', type=str, default=defaults['cognito'], help=help_descriptions['cognito'])
     parser.add_argument('--user-pool', '-u', type=str, default=defaults['user-pool'], help=help_descriptions['user-pool'])
-    parser.add_argument('--client-name', '-c', type=str, default=defaults['client-name'], help=help_descriptions['client-name'])
+    parser.add_argument('--client-name', '-n', type=str, default=defaults['client-name'], help=help_descriptions['client-name'])
     parser.add_argument('--profile', '-f', type=str, default=defaults['profile'], help=help_descriptions['profile'])
     parser.add_argument('--region', '-r', type=str, default=defaults['region'], help=help_descriptions['region'])
     return parser.parse_args()
@@ -46,7 +46,7 @@ def setup_cognito_user_pool(args):
         raise e
     try:
         user_pool_client=cognito.create_user_pool_client(
-            UserPoolId = user_pool['id'],
+            UserPoolId = user_pool['Id'],
             ClientName = args.client_name,
             GenerateSecret = True).get('UserPoolClient')
     except Exception as e:
@@ -64,7 +64,7 @@ def get_cognito_client(args):
 
 def main():
     args = parse_args()
-    result = create_user_cognito(args)
+    result = setup_cognito_user_pool(args)
     pprint(result)
 
 if __name__ == '__main__':
