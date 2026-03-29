@@ -1,8 +1,7 @@
 #! /usr/bin/env python3
-from app.services.auth import CognitoService as Cognito
 from argparse import ArgumentParser, RawTextHelpFormatter
 from boto3 import Session
-from botocore import client as botocoreClient
+from pprint import pprint
 from os import environ as env
 
 defaults = {
@@ -43,16 +42,29 @@ def parse_args():
 
 def create_user_cognito(args):
     cognito = get_cognito_client(args)
-    user = cognito.admin_create_user(
-        UserPoolId=args.user_pool,
-        UserAttributes=[
-            {'Name': 'email', 'Value': args.email},
-            {'Name': 'email_verified', 'Value': 'true'},
-            ]
-        Username=args.email,
-        MessageAction='SUPPRESS',
-    )['User']
-    
+    user_attributes = [
+        {'Name': 'email', 'Value': args.email},
+        {'Name': 'email_verified', 'Value': 'true'},
+    ]
+    try:
+        user = cognito.admin_create_user(
+            UserPoolId=args.user_pool,
+            UserAttributes=user_attributes,
+            Username=args.email,
+            MessageAction='SUPPRESS',
+        )['User']
+    except Exception as e:
+        raise e
+    try:
+        cognito.admin_set_user_password(
+            UserPoolId=args.user_pool,
+            Username=args.email,
+            Password=args.password,
+            Permanent=True,
+        )
+    except Exception as e:
+        raise e
+    return user
 
 
 def get_cognito_client(args):
@@ -63,7 +75,8 @@ def get_cognito_client(args):
 
 def main():
     args = parse_args()
-    create_user_cognito(args)
+    result = create_user_cognito(args)
+    pprint(result)
 
 if __name__ == '__main__':
     main()

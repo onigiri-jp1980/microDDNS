@@ -16,7 +16,9 @@ services:
       - STAGE=local
       - NODE_ENV=development
       - AWS_REGION=${AWS_REGION:-ap-northeast-1}
-      - AWS_ENDPOINT_URL=http://kumo:4566
+      - AWS_ENDPOINT_URL=http://floci:4566
+      - AWS_ENDPOINT_URL_SES=http://kumo:4566
+      - AWS_ENDPOINT_URL_SESV2=http://kumo:4566
       - CLOUDFLARE_API_TOKEN=${CLOUDFLARE_API_TOKEN:-test}
       - CLOUDFLARE_ACCOUNT_ID=${CLOUDFLARE_ACCOUNT_ID:-test}
       - CLOUDFLARE_EMAIL=${CLOUDFLARE_EMAIL:-test}
@@ -25,7 +27,7 @@ services:
       - COGNITO_CLIENT_SECRET=${COGNITO_CLIENT_SECRET:-test}
     volumes:
       - ./code/backend:/app
-      - ~/.aws:/home/${USER_NAME}/.aws
+      #- ~/.aws:/home/${USER_NAME}/.aws
     command: sls offline start --host 0.0.0.0 --httpPort 3000 --reloadHandler --stage local
   dynamodb-admin:
     image: aaronshaf/dynamodb-admin:latest
@@ -40,12 +42,23 @@ services:
       - DYNAMO_ENDPOINT=http://kumo:4566
     volumes:
       - ./services/dynamodb-admin/data:/data
+  floci:
+    container_name: floci
+    image: hectorvent/floci:latest
+    ports:
+      - 4566:4566
+    environment:
+      - FLOCI_STORAGE_MODE=persistent
+      - FLOCI_STORAGE_PERSISTENT_PATH=/app/data
+    volumes:
+      - ./services/floci/data:/app/data
+    user: root
 
   kumo:
     container_name: kumo
     image: ghcr.io/sivchari/kumo:latest
     ports:
-      - 4566:4566
+      - 14566:4566
     environment:
       - KUMO_DATADIR=/data
     volumes:
