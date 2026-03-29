@@ -1,9 +1,15 @@
-set_env_vars := USER_NAME=$(shell id -un) USER_ID=$(shell id -u) GROUP_ID=$(shell id -g) GROUP_NAME=$(shell id -gn)
+ENV ?=
+
+COMPOSE_FILE := $(if $(COMPOSE),compose.$(COMPOSE).yml,compose.yml)
+
+set_env_vars_base := USER_NAME=$(shell id -un) USER_ID=$(shell id -u) GROUP_ID=$(shell id -g) GROUP_NAME=$(shell id -gn)
+set_env_vars := $(set_env_vars_base) COMPOSE_FILE=$(COMPOSE_FILE)
 
 default: help
 
 help:
-	@echo "Usage: make <target>"
+	@echo "Usage: make <target> COMPOSE=<target_env>"
+	@echo "  COMPOSE: unset -> compose.yml, otherwise -> compose.<TARGET_ENV>.yml"
 	@echo "Targets:"
 	@echo "  up - Start the services"
 	@echo "  logs - Follow the logs"
@@ -52,7 +58,7 @@ build:
 
 deploy-image:
 	@echo "Building the deploy image..."
-	$(set_env_vars) docker compose -f compose.deploy.yml build
+	$(set_env_vars_base) docker compose -f compose.deploy.yml build
 .PHONY: deploy-image
 bash:
 	@echo "Running bash in app container..."
