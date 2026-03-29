@@ -12,7 +12,7 @@ services:
     ports:
       - 13000:3000
     environment:
-      - APP_STAGE=local
+      - APP_STAGE=dev
       - STAGE=local
       - NODE_ENV=development
       - AWS_REGION=${AWS_REGION:-ap-northeast-1}
