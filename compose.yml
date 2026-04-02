@@ -15,11 +15,11 @@ services:
       - APP_STAGE=dev
       - STAGE=local
       - NODE_ENV=development
+      - AWS_BACKEND_URL=${AWS_BACKEND_URL:-http://kumo:4566}
       - AWS_REGION=${AWS_REGION:-ap-northeast-1}
-      - AWS_ENDPOINT_URL=${AWS_ENDPOINT_URL}
-      - AWS_ENDPOINT_URL_DYNAMODB=http://kumo:4566
-      - AWS_ENDPOINT_URL_SES=http://kumo:4566
-      - AWS_ENDPOINT_URL_SESV2=http://kumo:4566
+      - AWS_ENDPOINT_URL_DYNAMODB=${AWS_BACKEND_URL}
+      - AWS_ENDPOINT_URL_SES=${AWS_BACKEND_URL}
+      - AWS_ENDPOINT_URL_SESV2=${AWS_BACKEND_URL}
       - AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID:-test}
       - AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY:-test}
       - CLOUDFLARE_API_TOKEN=${CLOUDFLARE_API_TOKEN:-test}
@@ -42,24 +42,14 @@ services:
       - AWS_SECRET_ACCESS_KEY=test
       - HOST=0.0.0.0
       - PORT=8001
-      - DYNAMO_ENDPOINT=http://kumo:4566
+      - DYNAMO_ENDPOINT=http://${AWS_BACKEND}:4566
     volumes:
       - ./services/dynamodb-admin/data:/app/data
-  floci:
-    container_name: floci
-    image: hectorvent/floci:latest
-    ports:
-      - ${FLOCI_PORT}:4566
-    environment:
-      - FLOCI_STORAGE_MODE=persistent
-      - FLOCI_STORAGE_PERSISTENT_PATH=/data
-    volumes:
-      - ./services/floci/data:/data
   kumo:
     container_name: kumo
     image: ghcr.io/sivchari/kumo:latest
     ports:
-      - ${KUMO_PORT}:4566
+      - ${AWS_BACKEND_PORT:-4566}:4566
     environment:
       - KUMO_DATA_DIR=/data
       - AWS_DEFAULT_REGION=ap-northeast-1

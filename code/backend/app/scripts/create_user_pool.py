@@ -7,7 +7,7 @@ from os import environ as env
 defaults = {
     'profile': 'default' or env.get('AWS_PROFILE', 'default'),
     'region': 'ap-northeast-1' or env.get('AWS_REGION', 'ap-northeast-1'),
-    'cognito': 'floci' or env.get('COGNITO_NAME', 'floci'),
+    'cognito': 'floci' or env.get('COGNITO_NAME', 'kumo'),
     'user-pool': 'local' or env.get('COGNITO_USER_POOL', 'local'),
     'client-name': 'local-client' or env.get('COGNITO_USER_POOL_CLIENT')
 }
@@ -57,10 +57,12 @@ def setup_cognito_user_pool(args):
  
 
 def get_cognito_client(args):
+    endpoint_url = env.get('AWS_BACKEND_URL', None)
+    profile_name = args.profile if args.cognito == 'aws' else None
+    region_name = args.region if args.cognito == 'aws' else None
     return Session(
-        profile_name=args.profile if args.cognito == 'aws' else None, 
-        region_name=args.region if args.cognito == 'aws' else None,
-        ).client('cognito-idp')
+        profile_name=profile_name,region_name=region_name
+        ).client('cognito-idp', endpoint_url=endpoint_url)
 
 def main():
     args = parse_args()
