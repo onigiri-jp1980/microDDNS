@@ -17,6 +17,7 @@ services:
       - NODE_ENV=development
       - AWS_BACKEND_URL=${AWS_BACKEND_URL:-http://kumo:4566}
       - AWS_REGION=${AWS_REGION:-ap-northeast-1}
+      - AWS_ENDPOINT_URL=${AWS_BACKEND_URL:-http://kumo:4566}
       #- AWS_ENDPOINT_URL_DYNAMODB=${AWS_BACKEND_URL}
       #- AWS_ENDPOINT_URL_SES=${AWS_BACKEND_URL}
       #- AWS_ENDPOINT_URL_SESV2=${AWS_BACKEND_URL}
@@ -27,7 +28,9 @@ services:
       - CLOUDFLARE_EMAIL=${CLOUDFLARE_EMAIL:-test}
       - COGNITO_USER_POOL_ID=${COGNITO_USER_POOL_ID:-test}
       - COGNITO_CLIENT_ID=${COGNITO_CLIENT_ID:-test}
-      - COGNITO_CLIENT_SECRET=${COGNITO_CLIENT_SECRET} #ローカルは空欄なので
+      - COGNITO_CLIENT_SECRET=${COGNITO_CLIENT_SECRET} 
+      - ADMIN_EMAIL=${ADMIN_EMAIL:-test@example.com}
+      - ADMIN_PASSWORD=${ADMIN_PASSWORD:-p@ssw0rd}
     volumes:
       - ./code/backend:/app
       #- ~/.aws:/home/${USER_NAME}/.aws
@@ -42,7 +45,7 @@ services:
       - AWS_SECRET_ACCESS_KEY=test
       - HOST=0.0.0.0
       - PORT=8001
-      - DYNAMO_ENDPOINT=${AWS_BACKEND_URL}
+      - DYNAMO_ENDPOINT=${AWS_ENDPOINT_URL}
     volumes:
       - ./services/dynamodb-admin/data:/app/data
   kumo:

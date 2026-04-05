@@ -60,8 +60,7 @@ class Users(CustomModel):
     class Meta(BaseMeta):
         table_name = 'users'
     id = NumberAttribute(hash_key=True)
-    cognitoId = UnicodeAttribute(range_key=True)
-    email = UnicodeAttribute()
+    email = UnicodeAttribute(range_key=True)
     createdAt = UTCDateTimeAttribute(default=datetime.now)
     updatedAt = UTCDateTimeAttribute(default=datetime.now)
     def get_by_cognito_id(self, cognito_id: str) -> 'Users':

@@ -2,8 +2,10 @@
 from argparse import ArgumentParser, RawTextHelpFormatter
 from boto3 import Session
 from pprint import pprint
+from typing import Any
 from os import environ as env
 from app.services.auth import SecretHashService
+from app.models import ApiKeys,Users
 
 #`確認コード
 confirmation_code = {
@@ -107,18 +109,34 @@ def create_user_cognito(args,user_pool):
                 Password=args.password,
                 UserAttributes=user_attributes,
             )
-            cognito.confirm_sign_up(
+            result=cognito.confirm_sign_up(
                 ClientId=user_pool['ClientId'],
                 SecretHash=secret_hash,
                 Username=args.email,
                 ConfirmationCode=confirmation_code[args.backend],
             )
+            pprint(result)
             return user
         except Exception as e:
             raise e
     return user
 
- 
+
+def register_api_key(user_id: str,email: str)->ApiKeys:
+    api_key = ApiKeys(userId=user_id)
+    try:
+        api_key.save()
+    except Exception as e:
+        raise e
+    return api_key
+
+def register_user(user_id: str,email: str)->Users:
+    user = Users(id=user_id,email=email)
+    try:
+        user.save()
+    except Exception as e:
+        raise e
+    return user
 
 def get_cognito_client(args):
     endpoint_url = env.get('AWS_BACKEND_URL', None)
@@ -134,8 +152,15 @@ def get_user_attributes(args):
         {'Name': 'email_verified', 'Value': 'true'},
         {'Name': 'custom:role', 'Value': 'admin'},
     ]
+
+def convert_user_attributes(user_attributes: list[dict[str, Any]])->dict[str, Any]:
+    return {
+        item['Name']: item['Value'] for item in user_attributes
+    }
+
 def main():
     args = parse_args()
+    print(f'detected backend: {args.backend}')
     print('Cognitoユーザープール作成開始')
     user_pool = setup_cognito_user_pool(args)
     print('Cognitoユーザープール作成完了')
@@ -146,5 +171,15 @@ def main():
     pprint(user_pool)
     print('管理者ユーザー情報:')
     pprint(user)
+    print('APIキー作成開始')
+    api_key = register_api_key(user_id=user['UserSub'],email=args.email)
+    print('APIキー作成完了')
+    print('APIキー情報:')
+    pprint(api_key._as_dict())
+    print('ユーザー登録開始')
+    user = register_user(user_id=user['UserSub'],email=args.email)
+    print('ユーザー登録完了')
+    print('ユーザー情報:')
+    pprint(user._as_dict())
 if __name__ == '__main__':
     main()

@@ -79,4 +79,9 @@ class CognitoService:
             Password=password,
             UserAttributes=[{'Name': 'email', 'Value': email}]
         )
+    def purge_user_pools(self):
+        user_pools = self.client.list_user_pools(MaxResults=100)['UserPools']
+        for user_pool in user_pools:
+            self.client.delete_user_pool(UserPoolId=user_pool['Id'])
+            print(f"Deleted user pool {user_pool['Id']}")
 
