@@ -74,6 +74,11 @@ def setup_cognito_user_pool(args):
     return user_pool_client
 
 def create_user_cognito(args,user_pool):
+    secret_hash = SecretHashService(
+        email=args.email,
+        client_id=user_pool['ClientId'],
+        client_secret=user_pool['ClientSecret']
+    ).get()
     cognito = get_cognito_client(args)
     user_attributes = get_user_attributes(args)
     if args.backend == 'floci':
@@ -96,11 +101,6 @@ def create_user_cognito(args,user_pool):
         except Exception as e:
             raise e
     elif args.backend == 'kumo':
-        secret_hash = SecretHashService(
-            email=args.email,
-            client_id=user_pool['ClientId'],
-            client_secret=user_pool['ClientSecret']
-        ).get()
         try:
             user = cognito.sign_up(
                 ClientId=user_pool['ClientId'],
@@ -131,7 +131,7 @@ def register_api_key(user_id: str,email: str)->ApiKeys:
     return api_key
 
 def register_user(user_id: str,email: str)->Users:
-    user = Users(id=user_id,email=email)
+    user = Users(cognitoSub=user_id,email=email)
     try:
         user.save()
     except Exception as e:

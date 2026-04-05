@@ -59,7 +59,8 @@ class Hosts(CustomModel):
 class Users(CustomModel):
     class Meta(BaseMeta):
         table_name = 'users'
-    id = NumberAttribute(hash_key=True)
+    id = UnicodeAttribute(hash_key=True,default=str(uuid()))
+    cognitoSub = UnicodeAttribute()
     email = UnicodeAttribute(range_key=True)
     createdAt = UTCDateTimeAttribute(default=datetime.now)
     updatedAt = UTCDateTimeAttribute(default=datetime.now)
